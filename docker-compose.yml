@@ -18,6 +18,11 @@ services:
       MYSQL_PASSWORD: 1234
     networks:
       - app-net
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   pythonapp:
     image: app:1.2
@@ -34,6 +39,9 @@ services:
       DB_NAME: app_db
       DB_USER: app_user
       DB_PASSWORD: 1234
+    depends_on:
+      mysql:
+        condition: service_healthy
     networks:
       - app-net
     restart: unless-stopped
